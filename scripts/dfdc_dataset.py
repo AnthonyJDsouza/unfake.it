@@ -6,6 +6,7 @@ import uuid
 from tqdm import tqdm
 # import huggingface_hub
 from datasets import Dataset, Video, ClassLabel, Image, Features, Value
+import argparse
 
 
 def frame_generator(input_folder, csv_path, output_dir, interval_sec = 0.5):
@@ -55,6 +56,13 @@ def frame_generator(input_folder, csv_path, output_dir, interval_sec = 0.5):
 
 # frame_generator('data/video/', 'data/video/dataset.csv', 'data/outputjpg/')
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--csv', type=str, required=True)
+parser.add_argument('--input_folder', type=str, required=True)
+parser.add_argument('--output_dir', type=str, required=True)
+args = parser.parse_args()
+
 features = Features({
     'video_name': Value('string'),
     'image': Image(),
@@ -63,12 +71,18 @@ features = Features({
 
 dataset = Dataset.from_generator(
     generator = frame_generator,
-    gen_kwargs= {
-        'csv_path': 'data/video/dfdc.csv',
-        'output_dir': 'data/outputjpg/',
-        'input_folder': 'data/video/'
-        },
+    # gen_kwargs= {
+    #     'csv_path': 'data/video/dfdc.csv',
+    #     'output_dir': 'data/outputjpg/',
+    #     'input_folder': 'data/video/'
+    #     },
+    gen_kwargs={
+        'csv_path': args.csv,
+        'output_dir': args.output_dir,
+        'input_folder': args.input_folder
+    },
     features= features
 )
 
 dataset.save_to_disk('data/hf/')
+
