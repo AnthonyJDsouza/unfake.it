@@ -61,6 +61,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--csv', type=str, required=True)
 parser.add_argument('--input_folder', type=str, required=True)
 parser.add_argument('--output_dir', type=str, required=True)
+parser.add_argument('--hf_dataset_dir', type=str, required=True)
 args = parser.parse_args()
 
 features = Features({
@@ -84,5 +85,5 @@ dataset = Dataset.from_generator(
     features= features
 )
 
-dataset.save_to_disk('data/hf/')
+dataset.save_to_disk(args.hf_dataset_dir)
 
