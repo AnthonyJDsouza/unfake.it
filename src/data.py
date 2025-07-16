@@ -49,4 +49,4 @@ def prepare_dataloaders(train_dataset, val_dataset, model_name, batch_size = 64)
 
     train_dataloader = DataLoader(train_ds, batch_size=batch_size)
     val_dataloader = DataLoader(val_ds, batch_size=batch_size)
-    return train_dataloader, val_dataloader
+    return train_dataloader, val_dataloader, len(train_dataset.features['label'].names)

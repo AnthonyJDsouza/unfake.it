@@ -12,6 +12,7 @@ class ImageClassifier(L.LightningModule):
     def __init__(
             self,
             model_name,
+            num_labels,
             learning_rate = 1e-5,
             warmup_steps = 500,
             lora_rank = 8,
@@ -23,6 +24,7 @@ class ImageClassifier(L.LightningModule):
     ):
         super().__init__()
         self.model_name = model_name
+        self.num_labels = num_labels
         self.learning_rate = learning_rate
         self.warmup_steps = warmup_steps
         self.lora_rank = lora_rank
