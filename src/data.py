@@ -1,5 +1,5 @@
 from torchvision.transforms import v2
-
+import cv2
 from transformers import AutoImageProcessor
 from datasets import load_dataset, load_from_disk
 from torch.utils.data import DataLoader
@@ -41,7 +41,12 @@ def prepare_dataloaders(train_dataset, val_dataset, model_name, batch_size = 64)
     ])
 
     def transform_example(example):
-        image = transforms(example['image'])
+        image = cv2.imread(example['image'])
+        if image is not None:
+            image = cv2.cvtColor(image, cv2.COLOr_BGR2RGB)
+        image = image.transpose((2,0,1)) # HWC -> CHW, as torch expects
+        image = torch.from_numpy(image)
+        image = transforms(image)
         # label_id = LABEL_MAP[example['label']]
         return {'pixel_values': image, 'label': example['label']}
     
