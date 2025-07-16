@@ -29,7 +29,7 @@ class PadToSquare:
         
 
 def prepare_dataloaders(train_dataset, val_dataset, model_name, batch_size = 64):
-    processor = AutoImageProcessor.from_pretrained(model_name)
+    processor = AutoImageProcessor.from_pretrained(model_name, use_auth_tokens=False)
 
     transforms = v2.Compose([
         v2.Resize(224, antialias=True),

@@ -6,7 +6,9 @@ from lightning.pytorch.loggers import WandbLogger
 import wandb
 from datasets import load_from_disk, concatenate_datasets
 import argparse
-MODEL_NAME =    
+
+MODEL_NAME = "google/vit-base-patch32-224-in21k"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--ds0', type=str, required=True)
 parser.add_argument('--ds1', type=str, required=True)
