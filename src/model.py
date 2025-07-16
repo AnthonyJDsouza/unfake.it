@@ -19,7 +19,6 @@ class ImageClassifier(L.LightningModule):
             target_modules = ['query', 'value'],
             lora_dropout = 0.1,
             use_rslora = True,
-            modules_to_save = ['classifier'],
             loss_fn = nn.BCEWithLogitsLoss(),
     ):
         super().__init__()
@@ -31,7 +30,7 @@ class ImageClassifier(L.LightningModule):
         self.target_modules = target_modules
         self.lora_dropout = lora_dropout
         self.use_rslora = use_rslora
-        self.modules_to_save = modules_to_save
+        # self.modules_to_save = modules_to_save
         self.loss_fn = loss_fn
         self.train_accuracy = Accuracy(task='binary')
         self.val_accuracy = Accuracy(task='binary')
@@ -47,7 +46,6 @@ class ImageClassifier(L.LightningModule):
             lora_alpha=self.lora_alpha,
             target_modules=self.target_modules,
             lora_dropout=self.lora_dropout,
-            modules_to_save=self.modules_to_save,
             use_rslora=self.use_rslora
         )
 
