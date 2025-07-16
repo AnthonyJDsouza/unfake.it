@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchmetrics.classification import Accuracy
-from loss import FocalLoss
+from .loss import FocalLoss
 
 class ImageClassifier(L.LightningModule):
     def __init__(
