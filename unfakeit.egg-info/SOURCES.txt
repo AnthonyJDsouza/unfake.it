@@ -1,0 +1,13 @@
+setup.py
+scripts/__init__.py
+scripts/dfdc_dataset.py
+scripts/hf_dataset_test.py
+scripts/train.py
+src/__init__.py
+src/data.py
+src/loss.py
+src/model.py
+unfakeit.egg-info/PKG-INFO
+unfakeit.egg-info/SOURCES.txt
+unfakeit.egg-info/dependency_links.txt
+unfakeit.egg-info/top_level.txt

@@ -1,0 +1,11 @@
+Metadata-Version: 2.2
+Name: unfakeit
+Version: 0.0.1
+Summary: detecting AI generated content
+Author: Anthony J. Dsouza
+Author-email: ajdsouza@lst.uni-saarland.de
+License: MIT
+Dynamic: author
+Dynamic: author-email
+Dynamic: license
+Dynamic: summary
