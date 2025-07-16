@@ -39,9 +39,9 @@ class ImageClassifier(L.LightningModule):
 
         self.model = AutoModelForImageClassification.from_pretrained(
             model_name,
-            num_labels = 1,
+            num_labels = self.num_labels,
             ignore_mismatched_sizes = True,
-            use_auth_tokens = False
+            token = False
         )
 
         lora_config = LoraConfig(

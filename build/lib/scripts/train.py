@@ -6,7 +6,9 @@ from lightning.pytorch.loggers import WandbLogger
 import wandb
 from datasets import load_from_disk, concatenate_datasets
 import argparse
-MODEL_NAME =    
+
+MODEL_NAME = "google/vit-base-patch32-224-in21k"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--ds0', type=str, required=True)
 parser.add_argument('--ds1', type=str, required=True)
@@ -34,15 +36,19 @@ model = ImageClassifier(
     loss_fn=loss_fn
 )
 
+wandb_logger = WandbLogger(project = "ViT finetuning")
 trainer = Trainer(
     max_epochs=1,
     accelerator='auto',
     precision='bf16-mixed',
-    logger=WandbLogger
+    logger=wandb_logger
 )
 
 trainer.fit(
+    model = model,
     train_dataloaders=train_dl,
     val_dataloaders=val_dl,
 )
+
+torch.save(model.state_dict(), '/scratch/ajdsouza/models/vit/cpu_preprocessing.pth')
 

@@ -29,24 +29,26 @@ class PadToSquare:
         
 
 def prepare_dataloaders(train_dataset, val_dataset, model_name, batch_size = 64):
-    processor = AutoImageProcessor.from_pretrained(model_name)
+    processor = AutoImageProcessor.from_pretrained(model_name, use_fast = True, token=False)
 
     transforms = v2.Compose([
+        # PadToSquare(fill = 0),
         v2.Resize(224, antialias=True),
         PadToSquare(fill = 0),
         v2.ToImage(),
-        v2.ToDtype(torch.float32, scale = True),
+        v2.ToDtype(torch.uint8, scale = True),
         v2.Normalize(mean = processor.image_mean, std = processor.image_std),
     ])
 
     def transform_example(example):
         image = transforms(example['image'])
-        label_id = LABEL_MAP[example['label']]
-        return {'pixel_values': image, 'label': label_id}
+        # label_id = LABEL_MAP[example['label']]
+        return {'pixel_values': image, 'label': example['label']}
     
     train_ds = train_dataset.map(transform_example)
     val_ds = val_dataset.map(transform_example)
 
-    train_dataloader = DataLoader(train_ds, batch_size=batch_size)
+    train_dataloader = DataLoader(train_ds, batch_size=batch_size, shuffle = True)
     val_dataloader = DataLoader(val_ds, batch_size=batch_size)
-    return train_dataloader, val_dataloader, len(train_dataset.features['label'].names)
+    num_classes = len(train_dataset.features['label'].names)
+    return train_dataloader, val_dataloader, num_classes

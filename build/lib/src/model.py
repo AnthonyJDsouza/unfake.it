@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchmetrics.classification import Accuracy
-from loss import FocalLoss
+# from .loss import FocalLoss
 
 class ImageClassifier(L.LightningModule):
     def __init__(
@@ -37,10 +37,11 @@ class ImageClassifier(L.LightningModule):
         self.train_accuracy = Accuracy(task='binary')
         self.val_accuracy = Accuracy(task='binary')
 
-        self.model = AutoModelForImageClassification(
+        self.model = AutoModelForImageClassification.from_pretrained(
             model_name,
-            num_labels = 1,
-            ignore_mismatched_sizes = True
+            num_labels = self.num_labels,
+            ignore_mismatched_sizes = True,
+            token = False
         )
 
         lora_config = LoraConfig(

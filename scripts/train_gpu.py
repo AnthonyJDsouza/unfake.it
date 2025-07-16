@@ -1,6 +1,6 @@
 from src.loss import FocalLoss
 from src.model import ImageClassifier
-from src.data import prepare_dataloaders
+from src.data_gpu import prepare_dataloaders
 from lightning import Trainer
 from lightning.pytorch.loggers import WandbLogger
 import wandb
@@ -50,5 +50,5 @@ trainer.fit(
     val_dataloaders=val_dl,
 )
 
-torch.save(model.state_dict(), '/scratch/ajdsouza/models/vit/cpu_preprocessing.pth')
+torch.save(model.state_dict(), '/scratch/ajdsouza/models/vit/test_gpu.pth')
 

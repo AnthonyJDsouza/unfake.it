@@ -3,8 +3,10 @@ scripts/__init__.py
 scripts/dfdc_dataset.py
 scripts/hf_dataset_test.py
 scripts/train.py
+scripts/train_gpu.py
 src/__init__.py
 src/data.py
+src/data_gpu.py
 src/loss.py
 src/model.py
 unfakeit.egg-info/PKG-INFO
