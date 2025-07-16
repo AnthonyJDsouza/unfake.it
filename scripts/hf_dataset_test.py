@@ -1,14 +1,20 @@
-from datasets import load_from_disk
-from huggingface_hub import login
+from datasets import load_from_disk, Features, ClassLabel
+import argparse
 
-login(str(input("Enter huggingface token: ")))
+def string_to_classlabel(dataset_path):
+    d = load_from_disk(dataset_path=dataset_path)
+    unique_labels = list(set(d['train']['label']))
+    new_features = d.features.copy()
+    new_features['label'] = ClassLabel(names=unique_labels)
+    
+    d = d.cast(new_features)
+    print("cast to ClassLabel")
 
-ds = load_from_disk('data/hf')
 
-# iter_ds = ds.to_iterable_dataset()
+parser = argparse.ArgumentParser()
+parser.add_argument('--dataset', typr=str, required = True)
+args = parser.parse_args()
+string_to_classlabel(args.dataset)
 
-# for ex in iter_ds:
-#     print(ex)
-
-
-ds.push_to_hub('tororoin/demo_img')
+dset = load_from_disk(args.dataset)
+print(dset.features)
