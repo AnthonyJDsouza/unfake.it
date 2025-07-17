@@ -61,10 +61,11 @@ def frame_generator(input_folder, csv_path, output_dir, interval_sec = 0.5):
                 break
 
         video.release()
-    with open(labels_csv, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
-        writer.writerows(frame_data)
+
+        with open(labels_csv, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(headers)
+            writer.writerows(frame_data)
 
 # frame_generator('data/video/', 'data/video/dataset.csv', 'data/outputjpg/')
 
