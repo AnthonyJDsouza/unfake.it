@@ -56,16 +56,9 @@ class PadToSquare:
 #     num_classes = len(train_dataset.features['label'].names)
 #     return train_dataloader, val_dataloader, num_classes
 
-processor = AutoImageProcessor.from_pretrained(args.model_name, use_fast = True, token=False)
 
-transforms = v2.Compose([
-        PadToSquare(fill = 0),
-        v2.Resize(224, antialias=True),
-        # PadToSquare(fill = 0),
-        v2.ToImage(),
-        v2.ToDtype(torch.uint8, scale = True),
-        v2.Normalize(mean = processor.image_mean, std = processor.image_std),
-    ])
+
+
 class DFDCDataset(Dataset):
     def __init__(self, csv_path, transform = None):
         self.labels_csv = pd.read_csv(csv_path)
@@ -91,9 +84,18 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--csv_path', type=str, required=True)
 parser.add_argument('--model-name', type=str, required=True)
 args = parser.parse_args()
+processor = AutoImageProcessor.from_pretrained(args.model_name, use_fast = True, token=False)
+transforms = v2.Compose([
+        PadToSquare(fill = 0),
+        v2.Resize(224, antialias=True),
+        # PadToSquare(fill = 0),
+        v2.ToImage(),
+        v2.ToDtype(torch.uint8, scale = True),
+        v2.Normalize(mean = processor.image_mean, std = processor.image_std),
+    ])
 
 training_data = DFDCDataset(csv_path = args.csv_path, transform = transforms)
-processor = AutoImageProcessor.from_pretrained(args.model_name, use_fast = True, token=False)
+
 training_dataloader = DataLoader(training_data, batch_size = 32, num_workers=4, shuffle = True)
 # demo_transforms = v2.Compose([
 #     PadToSquare(fill=0)
