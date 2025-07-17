@@ -43,7 +43,7 @@ def prepare_dataloaders(train_dataset, val_dataset, model_name, batch_size = 64)
     def transform_example(example):
         image = cv2.imread(example['image'])
         if image is not None:
-            image = cv2.cvtColor(image, cv2.COLOr_BGR2RGB)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image.transpose((2,0,1)) # HWC -> CHW, as torch expects
         image = torch.from_numpy(image)
         image = transforms(image)
