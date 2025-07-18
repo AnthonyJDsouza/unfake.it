@@ -1,6 +1,7 @@
 setup.py
 scripts/__init__.py
 scripts/dfdc_dataset.py
+scripts/frame_extractor.py
 scripts/hf_dataset_test.py
 scripts/train.py
 scripts/train_gpu.py

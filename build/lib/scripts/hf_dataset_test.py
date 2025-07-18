@@ -1,4 +1,4 @@
-from datasets import load_from_disk, Features, ClassLabel
+from datasets import load_from_disk, Features, ClassLabel, Image
 import argparse
 
 def string_to_classlabel(dataset_path, save_dir):
@@ -6,9 +6,9 @@ def string_to_classlabel(dataset_path, save_dir):
     unique_labels = ['FAKE', 'REAL']
     new_features = d.features.copy()
     new_features['label'] = ClassLabel(names=unique_labels)
-    
+    new_features['image'] = Image(decode=False)
     d = d.cast(new_features)
-    print("cast to ClassLabel")
+    print("casted to ClassLabel and no PIL decode in Image")
     d.save_to_disk(save_dir)
     
 

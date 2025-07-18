@@ -20,7 +20,8 @@ class ImageClassifier(L.LightningModule):
             target_modules = ['query', 'value'],
             lora_dropout = 0.1,
             use_rslora = True,
-            loss_fn = nn.BCEWithLogitsLoss(),
+            class_weight = None,
+            loss_fn = None
     ):
         super().__init__()
         self.model_name = model_name
@@ -33,9 +34,10 @@ class ImageClassifier(L.LightningModule):
         self.lora_dropout = lora_dropout
         self.use_rslora = use_rslora
         # self.modules_to_save = modules_to_save
+        self.class_weight = class_weight
         self.loss_fn = loss_fn
-        self.train_accuracy = Accuracy(task='binary')
-        self.val_accuracy = Accuracy(task='binary')
+        self.train_accuracy = Accuracy(task='multiclass', num_classes=num_labels)
+        self.val_accuracy = Accuracy(task='multiclass', num_classes=num_labels)
 
         self.model = AutoModelForImageClassification.from_pretrained(
             model_name,
@@ -49,7 +51,8 @@ class ImageClassifier(L.LightningModule):
             lora_alpha=self.lora_alpha,
             target_modules=self.target_modules,
             lora_dropout=self.lora_dropout,
-            use_rslora=self.use_rslora
+            use_rslora=self.use_rslora,
+            modules_to_save=['classifier']
         )
 
         self.lora_model = get_peft_model(self.model, lora_config)
@@ -60,18 +63,24 @@ class ImageClassifier(L.LightningModule):
 
     def training_step(self, batch, batch_idx):
         X, y = batch
-        y_hat = self(X)
-        loss = self.loss_fn(y_hat, y.float())
-        acc = self.train_accuracy(y_hat, y)
+        print(f"Before :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
+        y = y.long()
+        print(f"After :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
+        logits = self(X)
+        preds = torch.argmax(logits, dim = 1)
+        loss = self.loss_fn(logits, y)
+        acc = self.train_accuracy(preds, y)
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("train_accuracy", acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         X, y = batch
-        y_hat = self(X)
-        loss = self.loss_fn(y_hat, y.float())
-        acc = self.val_accuracy(y_hat, y)
+        y = y.long()
+        logits = self(X)
+        preds = torch.argmax(logits, dim = 1)
+        loss = self.loss_fn(logits, y)
+        acc = self.val_accuracy(preds, y)
         self.log("val_loss", loss, on_epoch=True, prog_bar=True, logger=True)
         self.log("val_accuracy", acc, on_epoch=True, prog_bar=True, logger=True)
         return loss

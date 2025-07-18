@@ -42,9 +42,10 @@ def frame_generator(input_folder, csv_path, output_dir, interval_sec = 0.5):
                 frame_path = os.path.join(output_dir, frame_filename)
                 cv2.imwrite(frame_path, frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
 
+                image = PILImage.open(frame_path)
                 yield {
                     'video_name': video_name,
-                    'image': frame_path,
+                    'image': image,
                     'label': label
                 }
                 # print(f"processing {video_name} labelled {label}")
@@ -64,10 +65,11 @@ parser.add_argument('--output_dir', type=str, required=True)
 parser.add_argument('--hf_dataset_dir', type=str, required=True)
 args = parser.parse_args()
 
+unique_labels = ['FAKE', 'REAL']
 features = Features({
     'video_name': Value('string'),
     'image': Image(),
-    'label': Value('string')
+    'label': ClassLabel(names = unique_labels)
 })
 
 dataset = Dataset.from_generator(

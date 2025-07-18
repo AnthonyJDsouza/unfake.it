@@ -80,25 +80,28 @@ class DFDCDataset(Dataset):
         image = self.transform(image)
         return image, label
     
-parser = argparse.ArgumentParser()
-parser.add_argument('--csv_path', type=str, required=True)
-parser.add_argument('--model-name', type=str, required=True)
-args = parser.parse_args()
-processor = AutoImageProcessor.from_pretrained(args.model_name, use_fast = True, token=False)
-transforms = v2.Compose([
-        PadToSquare(fill = 0),
-        v2.Resize(224, antialias=True),
-        # PadToSquare(fill = 0),
-        v2.ToImage(),
-        v2.ToDtype(torch.float32, scale = True),
-        v2.Normalize(mean = processor.image_mean, std = processor.image_std),
-    ])
+# parser = argparse.ArgumentParser()
+# parser.add_argument('--csv_path', type=str, required=True)
+# parser.add_argument('--model-name', type=str, required=True)
+# args = parser.parse_args()
 
-training_data = DFDCDataset(csv_path = args.csv_path, transform = transforms)
+# processor = AutoImageProcessor.from_pretrained(args.model_name, use_fast = True, token=False)
 
-training_dataloader = DataLoader(training_data, batch_size = 32, num_workers=4, shuffle = True)
-image, label = next(iter(training_dataloader))
-print(f"image shape: {image.shape}, label: {label.shape}")
+# transforms = v2.Compose([
+#         PadToSquare(fill = 0),
+#         v2.Resize(224, antialias=True),
+#         # PadToSquare(fill = 0),
+#         v2.ToImage(),
+#         v2.ToDtype(torch.float32, scale = True),
+#         v2.Normalize(mean = processor.image_mean, std = processor.image_std),
+#     ])
+
+# training_data = DFDCDataset(csv_path = args.csv_path, transform = transforms)
+
+# training_dataloader = DataLoader(training_data, batch_size = 32, num_workers=4, shuffle = True)
+# image, label = next(iter(training_dataloader))
+# print(f"image shape: {image.shape}, label: {label.shape}")
+
 # demo_transforms = v2.Compose([
 #     PadToSquare(fill=0)
 # ])
