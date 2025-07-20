@@ -68,7 +68,7 @@ class ImageClassifier(L.LightningModule):
         #print(f"After :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
         logits = self(X)
         logits = logits.view(-1)
-        print(f"Logits shape :: {logits.shape}")
+        # print(f"Logits shape :: {logits.shape}")
         preds = (torch.sigmoid(logits)>0.5).long()
         loss = self.loss_fn(logits, y)
         acc = self.train_accuracy(preds, y.long())
@@ -78,11 +78,13 @@ class ImageClassifier(L.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         X, y = batch
-        y = y.long()
+        y = y.float()
         logits = self(X)
-        preds = torch.argmax(logits, dim = 1)
+        logits = logits.view(-1)
+        
+        preds = (torch.sigmoid(logits)>0.5).long()
         loss = self.loss_fn(logits, y)
-        acc = self.val_accuracy(preds, y)
+        acc = self.val_accuracy(preds, y.long())
         self.log("val_loss", loss, on_epoch=True, prog_bar=True, logger=True)
         self.log("val_accuracy", acc, on_epoch=True, prog_bar=True, logger=True)
         return loss

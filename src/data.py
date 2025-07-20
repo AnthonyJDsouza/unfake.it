@@ -71,6 +71,12 @@ class DFDCDataset(Dataset):
         return len(self.labels_csv)
 
     def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.item()
+
+        if isinstance(idx, np.integer):
+            idx = int(idx)
+
         img_path = self.labels_csv.iloc[idx, 1]
         label = LABEL_MAP[self.labels_csv.iloc[idx, 2]]
         image = cv2.imread(img_path)
