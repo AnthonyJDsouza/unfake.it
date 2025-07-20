@@ -36,8 +36,8 @@ class ImageClassifier(L.LightningModule):
         # self.modules_to_save = modules_to_save
         self.class_weight = class_weight
         self.loss_fn = loss_fn
-        self.train_accuracy = Accuracy(task='multiclass', num_classes=num_labels)
-        self.val_accuracy = Accuracy(task='multiclass', num_classes=num_labels)
+        self.train_accuracy = Accuracy(task='binary')
+        self.val_accuracy = Accuracy(task='binary')
 
         self.model = AutoModelForImageClassification.from_pretrained(
             model_name,
@@ -63,13 +63,15 @@ class ImageClassifier(L.LightningModule):
 
     def training_step(self, batch, batch_idx):
         X, y = batch
-        print(f"Before :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
-        y = y.long()
-        print(f"After :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
+        #print(f"Before :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
+        y = y.float()
+        #print(f"After :: label: {y} :: labels shape: {y.shape} :: labels dtype: {y.dtype}")
         logits = self(X)
-        preds = torch.argmax(logits, dim = 1)
+        logits = logits.view(-1)
+        print(f"Logits shape :: {logits.shape}")
+        preds = (torch.sigmoid(logits)>0.5).long()
         loss = self.loss_fn(logits, y)
-        acc = self.train_accuracy(preds, y)
+        acc = self.train_accuracy(preds, y.long())
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("train_accuracy", acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss

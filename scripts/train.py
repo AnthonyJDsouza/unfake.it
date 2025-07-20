@@ -27,12 +27,12 @@ lf = len(l) / 2 * len([x for x in l if x == 'FAKE'])
 lr = len(l) / 2 * len([x for x in l if x == 'REAL'])
 weight = torch.tensor([lf, lr])
 # loss_fn = FocalLoss(gamma=0.8, alpha=0.75)
-loss_fn = nn.BCEWithLogitsLoss(weight=weight)
+loss_fn = nn.BCEWithLogitsLoss()
 #loss_fn = nn.CrossEntropyLoss(weight=weight)
 
 model = ImageClassifier(
     model_name=MODEL_NAME,
-    num_labels=2,
+    num_labels=1,
     loss_fn=loss_fn
 )
 loss_callback = ModelCheckpoint(
