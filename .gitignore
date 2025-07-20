@@ -3,3 +3,4 @@ data/video
 data/videoout
 wandb/
 Vit test/
+build/
