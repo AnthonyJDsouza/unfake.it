@@ -5,4 +5,5 @@ wandb/
 Vit test/
 build/
 ViT-AI-Media-Detection/
+.env
 
