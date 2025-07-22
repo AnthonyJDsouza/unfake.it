@@ -1,1 +1,0 @@
-python dfdc_dataset.py --csv /scratch/ajdsouza/dfdc/dfdc_train_part_1/metadata.csv --input_folder /scratch/ajdsouza/dfdc/dfdc_train_part1 --output_dir /scratch/ajdsouza/dfdc/dataset/part1 --hf_dataset_dir /scratch/ajdsouza/dfdc/dataset/hf/part1
