@@ -4,16 +4,20 @@ import torch.nn as nn
 import lightning as L
 from peft import PeftModel
 from dotenv import load_dotenv
-import gc
+import gc, os
 import psutil
 from transformers import AutoFeatureExtractor
-
+from huggingface_hub import login
 load_dotenv()
 
 token = os.getenv("HUGGINGFACE_HUB")
-model_path = ''
+base_path = 'ViT-AI-Media-Detection/7s7az2wv/checkpoints/'
+model_name = 'vit-best-loss-v1.ckpt'
+model = ImageClassifier.load_from_checkpoint(os.path.join(base_path, model_name),
+    model_name = "google/vit-base-patch32-224-in21k",
+    num_labels = 1
+        )
 
-model = ImageClassifier.load_from_checkpoint(model_path)
 peft_model = model.lora_model
 
 print(type(peft_model))
@@ -24,11 +28,14 @@ print(f"Total parameters: {total_params}")
 gc.collect()
 print(f"RAM used: {psutil.Process().memory_info().rss / 1e9:.2f} GB")
 
-ae = AutoFeatureExtractor.from_pretrained("google/vit-base-patch32-224-in21k")
-dummy_input = ae(images=[torch.rand(3, 224, 224)], return_tensors="pt")
+#ae = AutoFeatureExtractor.from_pretrained("google/vit-base-patch32-224-in21k")
+#dummy_input = ae(images=[torch.rand(3, 224, 224)], return_tensors="pt")
 
-with torch.no_grad():
-    outputs = peft_model(**dummy_input)
-print(outputs.last_hidden_state.shape)
+#with torch.no_grad():
+#    outputs = peft_model(**dummy_input)
+#print(outputs.last_hidden_state.shape)
 
 peft_model.save_pretrained('/scratch/ajdsouza/models/dfdc/vit_lora_adapter')
+
+login(token = token)
+peft_model.push_to_hub('ajdsouza/vit-AI-vs-real-lora-ft')
