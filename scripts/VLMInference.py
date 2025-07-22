@@ -1,29 +1,37 @@
+import os
 import torch
+from tqdm import tqdm
 import pandas as pd
 from transformers import AutoProcessor, AutoModelForImageTextToText
 
-work_dir = str(input('Enter working directory: '))
-BASE_PATH = '/scratch/ajdsouza/dfdc/dataset/'
+# work_dir = str(input('Enter working directory: '))
+BASE_PATH = '/scratch/ajdsouza/dfdc/dataset/scraped'
+BASE_DIR = '/scratch/ajdsouza/dfdc/unfakeit-scraped-videos'
 MODEL = 'HuggingFaceTB/SmolVLM2-256M-Video-Instruct'
 
-labels = pd.read_csv('')
-processor = AutoProcessor.from_pretrained(MODEL)
+labels = pd.read_csv(os.path.join(BASE_PATH, 'metadata.csv'))
+processor = AutoProcessor.from_pretrained(MODEL, token = False)
 model = AutoModelForImageTextToText.from_pretrained(
     MODEL,
     torch_dtype = torch.bfloat16,
-    _attn_implementation = 'flash_attention_2'
+    # _attn_implementation = 'flash_attention_2',
+    token = False
 ).to('cuda')
 
 #system = 'You are a helpful AI helping humans detect AI generated images using common sense reasoning. You look for logical inconsistencies in the video / image and hilight them'
 
-system = 'You are a helpful AI, helping humans detect AI generated images and videos. Users provide you with the video and a high level description of why the image is fake or real and you have to be super specific about what makes the video AI generated and give an enhanced description by incorporating your observations..'
+system = 'You are a helpful AI, helping humans detect AI generated images and videos. Users provide you with the video and a high level description of why the image or video is fake or real and you have to be super specific about what makes it AI generated and give an enhanced description by incorporating your observations with the provided descriptions'
 
 
 long_descriptions = []
-for idx, row in labels.iterrows():
-    path = row['path']
-    desc = row['description']
+for idx, row in tqdm(labels.iterrows(), total = len(labels)):
 
+    path = row['filename']
+    desc = row['description']
+    tqdm.write(f"Processing::: {path}")
+    #print(BASE_DIR)
+    #print(path)
+    #print(os.path.join(BASE_DIR, path))
     messages = [
         {
             'role': 'system',
@@ -34,14 +42,14 @@ for idx, row in labels.iterrows():
         {
             'role': 'user',
             'content': [
-                {'type': 'video', 'path': f"{path}"},
+                {'type': 'video', 'path': os.path.join(BASE_DIR, path)},
                 {'type': 'text', 'text':f"{desc}"}
             ]
         },
     ]
     inputs = processor.apply_chat_template(
         messages,
-        add_generation_prompt = True,
+       add_generation_prompt = True,
         tokenize = True,
         return_dict = True,
         return_tensors = 'pt'
@@ -62,4 +70,6 @@ for idx, row in labels.iterrows():
 
 labels['FineDescriptions'] = long_descriptions
 
-labels.to_csv('f{work_dir}/fine_labels.csv', index = False)
+labels.to_csv(os.path.join(BASE_DIR, 'fine_labels.csv'), index = False)
+
+# print(messages)
