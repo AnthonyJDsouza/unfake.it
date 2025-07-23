@@ -11,12 +11,13 @@ from huggingface_hub import login
 load_dotenv()
 
 token = os.getenv("HUGGINGFACE_HUB")
-base_path = '/local/ajdsouza/dfdc/models/vit-models/'
+base_path = '/local/ajdsouza/dfdc/models/vit-dfdc'
 model_name = 'vit-best-loss-v1.ckpt'
 model = ImageClassifier.load_from_checkpoint(os.path.join(base_path, model_name))
-
+tmodel = torch.load(os.path.join(base_path, model_name), map_location = 'cpu')
+sd = tmodel['state_dict']
 #model = ImageClassifier.load_from_checkpoint(model_path)
-model = model.load_state_dict(os.path.join(base_path, model_name), strict=False)
+model = model.load_state_dict(sd, strict=False)
 #print(type(peft_model))
 
 total_params = sum(p.numel() for p in model.parameters())
