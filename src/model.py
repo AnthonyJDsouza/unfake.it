@@ -11,8 +11,6 @@ from torchmetrics.classification import Accuracy
 class ImageClassifier(L.LightningModule):
     def __init__(
             self,
-            model_name,
-            num_labels,
             learning_rate = 1e-5,
             warmup_steps = 500,
             lora_rank = 8,
@@ -24,8 +22,8 @@ class ImageClassifier(L.LightningModule):
             loss_fn = None
     ):
         super().__init__()
-        self.model_name = model_name
-        self.num_labels = num_labels
+
+
         self.learning_rate = learning_rate
         self.warmup_steps = warmup_steps
         self.lora_rank = lora_rank
@@ -40,8 +38,8 @@ class ImageClassifier(L.LightningModule):
         self.val_accuracy = Accuracy(task='binary')
 
         self.model = AutoModelForImageClassification.from_pretrained(
-            model_name,
-            num_labels = self.num_labels,
+            'google/vit-base-patch32-224-in21k',
+            num_labels = 1,
             ignore_mismatched_sizes = True,
             token = False
         )
