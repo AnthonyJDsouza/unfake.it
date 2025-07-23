@@ -49,7 +49,7 @@ for idx, row in tqdm(labels.iterrows(), total = len(labels)):
     ]
     inputs = processor.apply_chat_template(
         messages,
-       add_generation_prompt = True,
+        add_generation_prompt = False,
         tokenize = True,
         return_dict = True,
         return_tensors = 'pt'
